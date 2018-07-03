@@ -31,6 +31,15 @@ public class BiometricPromptManager {
         void onError(int code, String reason);
 
         void onCancel();
+
+    }
+
+    public static BiometricPromptManager getInstance(Activity activity) {
+        if (mManager == null) {
+            mManager = new BiometricPromptManager(activity);
+        }
+
+        return mManager;
     }
 
     public BiometricPromptManager(Activity activity) {
@@ -40,14 +49,6 @@ public class BiometricPromptManager {
         } else if (isAboveApi23()) {
             mImpl = new BiometricPromptApi23(activity);
         }
-    }
-
-    public static BiometricPromptManager getInstance(Activity activity) {
-        if (mManager == null) {
-            mManager = new BiometricPromptManager(activity);
-        }
-
-        return mManager;
     }
 
     private boolean isAboveApi28() {
@@ -77,7 +78,7 @@ public class BiometricPromptManager {
             //TODO 这是Api23的判断方法，也许以后有针对Api28的判断方法
             final FingerprintManager manager = mActivity.getSystemService(FingerprintManager.class);
             return manager != null && manager.hasEnrolledFingerprints();
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        } else if (isAboveApi23()) {
             final FingerprintManager manager = mActivity.getSystemService(FingerprintManager.class);
             return manager != null && manager.hasEnrolledFingerprints();
         } else {
@@ -95,7 +96,7 @@ public class BiometricPromptManager {
             //TODO 这是Api23的判断方法，也许以后有针对Api28的判断方法
             final FingerprintManager fm = mActivity.getSystemService(FingerprintManager.class);
             return fm != null && fm.isHardwareDetected();
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        } else if (isAboveApi23()) {
             final FingerprintManager fm = mActivity.getSystemService(FingerprintManager.class);
             return fm != null && fm.isHardwareDetected();
         } else {
@@ -118,8 +119,10 @@ public class BiometricPromptManager {
      * @return
      */
     public boolean isBiometricPromptEnable() {
-        Log.i(TAG, "isBiometricPromptEnable: isKeyguardSecure = " + isKeyguardSecure() + ", isHardwareDetected = " + isHardwareDetected() + ", hasEnrolledFingerprints = " + hasEnrolledFingerprints());
-        return isAboveApi23() && isKeyguardSecure() && isHardwareDetected() && hasEnrolledFingerprints();
+        return isAboveApi23()
+                && isHardwareDetected()
+                && hasEnrolledFingerprints()
+                && isKeyguardSecure();
     }
 
     /**
