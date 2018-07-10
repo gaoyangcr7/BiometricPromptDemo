@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         mTextView = findViewById(R.id.text_view);
         mButton = findViewById(R.id.button);
 
-        mManager = BiometricPromptManager.getInstance(this);
+        mManager = BiometricPromptManager.from(this);
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("SDK version is "+ Build.VERSION.SDK_INT);
         stringBuilder.append("\n");

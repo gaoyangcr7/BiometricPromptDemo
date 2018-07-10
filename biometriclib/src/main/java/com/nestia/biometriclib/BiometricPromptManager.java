@@ -19,8 +19,6 @@ public class BiometricPromptManager {
     private IBiometricPromptImpl mImpl;
     private Activity mActivity;
 
-    private static BiometricPromptManager mManager;
-
     public interface OnBiometricIdentifyCallback {
         void onUsePassword();
 
@@ -34,12 +32,8 @@ public class BiometricPromptManager {
 
     }
 
-    public static BiometricPromptManager getInstance(Activity activity) {
-        if (mManager == null) {
-            mManager = new BiometricPromptManager(activity);
-        }
-
-        return mManager;
+    public static BiometricPromptManager from(Activity activity) {
+        return new BiometricPromptManager(activity);
     }
 
     public BiometricPromptManager(Activity activity) {
@@ -79,8 +73,7 @@ public class BiometricPromptManager {
             final FingerprintManager manager = mActivity.getSystemService(FingerprintManager.class);
             return manager != null && manager.hasEnrolledFingerprints();
         } else if (isAboveApi23()) {
-            final FingerprintManager manager = mActivity.getSystemService(FingerprintManager.class);
-            return manager != null && manager.hasEnrolledFingerprints();
+            return ((BiometricPromptApi23)mImpl).hasEnrolledFingerprints();
         } else {
             return false;
         }
@@ -97,8 +90,7 @@ public class BiometricPromptManager {
             final FingerprintManager fm = mActivity.getSystemService(FingerprintManager.class);
             return fm != null && fm.isHardwareDetected();
         } else if (isAboveApi23()) {
-            final FingerprintManager fm = mActivity.getSystemService(FingerprintManager.class);
-            return fm != null && fm.isHardwareDetected();
+            return ((BiometricPromptApi23)mImpl).isHardwareDetected();
         } else {
             return false;
         }

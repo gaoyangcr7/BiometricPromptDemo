@@ -31,7 +31,7 @@ public class BiometricPromptApi28 implements IBiometricPromptImpl {
     private static final String KEY_NAME = "BiometricPromptApi28";
 
     private Activity mActivity;
-    private BiometricPrompt biometricPrompt;
+    private BiometricPrompt mBiometricPrompt;
     private BiometricPromptManager.OnBiometricIdentifyCallback mManagerIdentifyCallback;
     private CancellationSignal mCancellationSignal;
     private Signature mSignature;
@@ -40,7 +40,7 @@ public class BiometricPromptApi28 implements IBiometricPromptImpl {
     @RequiresApi(Build.VERSION_CODES.P)
     public BiometricPromptApi28(Activity activity) {
         mActivity = activity;
-        biometricPrompt = new BiometricPrompt
+        mBiometricPrompt = new BiometricPrompt
                 .Builder(activity)
                 .setTitle(activity.getResources().getString(R.string.biometric_dialog_title))
                 .setDescription(activity.getResources().getString(R.string.biometric_dialog_subtitle))
@@ -92,7 +92,7 @@ public class BiometricPromptApi28 implements IBiometricPromptImpl {
             }
         });
 
-        biometricPrompt.authenticate(new BiometricPrompt.CryptoObject(mSignature),
+        mBiometricPrompt.authenticate(new BiometricPrompt.CryptoObject(mSignature),
                 mCancellationSignal, mActivity.getMainExecutor(), new BiometricPromptCallbackImpl());
     }
 
@@ -174,4 +174,5 @@ public class BiometricPromptApi28 implements IBiometricPromptImpl {
         }
         return null;
     }
+
 }

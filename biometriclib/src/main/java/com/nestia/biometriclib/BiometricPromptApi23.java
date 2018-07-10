@@ -39,27 +39,26 @@ public class BiometricPromptApi23 implements IBiometricPromptImpl {
     @Override
     public void authenticate(@Nullable CancellationSignal cancel,
                              @NonNull BiometricPromptManager.OnBiometricIdentifyCallback callback) {
-
+        //指纹识别的回调
         mManagerIdentifyCallback = callback;
 
-        FragmentTransaction ft = mActivity.getFragmentManager().beginTransaction();
-        Fragment prev = mActivity.getFragmentManager().findFragmentByTag("BiometricPromptApi23");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-        ft.addToBackStack(null);
+        /**
+         * 我实现了一个自定义dialog，
+         * BiometricPromptDialog.OnBiometricPromptDialogActionCallback是自定义dialog的回调
+         */
         mDialog = BiometricPromptDialog.newInstance();
         mDialog.setOnBiometricPromptDialogActionCallback(new BiometricPromptDialog.OnBiometricPromptDialogActionCallback() {
             @Override
             public void onDialogDismiss() {
+                //当dialog消失的时候，包括点击userPassword、点击cancel、和识别成功之后
                 if (mCancellationSignal != null && !mCancellationSignal.isCanceled()) {
                     mCancellationSignal.cancel();
-                    mFingerprintManager = null;
                 }
             }
 
             @Override
             public void onUsePassword() {
+                //一些情况下，用户还可以选择使用密码
                 if (mManagerIdentifyCallback != null) {
                     mManagerIdentifyCallback.onUsePassword();
                 }
@@ -67,12 +66,13 @@ public class BiometricPromptApi23 implements IBiometricPromptImpl {
 
             @Override
             public void onCancel() {
+                //点击cancel键
                 if (mManagerIdentifyCallback != null) {
                     mManagerIdentifyCallback.onCancel();
                 }
             }
         });
-        mDialog.show(ft, "BiometricPromptApi23");
+        mDialog.show(mActivity.getFragmentManager(), "BiometricPromptApi23");
 
         mCancellationSignal = cancel;
         if (mCancellationSignal == null) {
@@ -140,4 +140,17 @@ public class BiometricPromptApi23 implements IBiometricPromptImpl {
         return mFingerprintManager;
     }
 
+    public boolean isHardwareDetected() {
+        if (mFingerprintManager != null) {
+            return mFingerprintManager.isHardwareDetected();
+        }
+        return false;
+    }
+
+    public boolean hasEnrolledFingerprints() {
+        if (mFingerprintManager != null) {
+            return mFingerprintManager.hasEnrolledFingerprints();
+        }
+        return false;
+    }
 }
