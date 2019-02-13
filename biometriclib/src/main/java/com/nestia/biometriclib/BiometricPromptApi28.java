@@ -89,6 +89,7 @@ public class BiometricPromptApi28 implements IBiometricPromptImpl {
         mCancellationSignal.setOnCancelListener(new CancellationSignal.OnCancelListener() {
             @Override
             public void onCancel() {
+                mManagerIdentifyCallback.onCancel();
             }
         });
 
